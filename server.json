@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.ksh0rt/curagent-mcp",
+  "version": "1.0.0",
+  "description": "AI title risk analysis for Florida real estate closing documents.",
+  "title": "Curagent Title Risk",
+  "websiteUrl": "https://curagent.io",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.curagent.io/"
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/ksh0rt/curagent-mcp",
+    "source": "github"
+  }
+}
