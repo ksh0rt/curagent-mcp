@@ -15,6 +15,12 @@ builder.Services.AddHttpClient("curagent", client =>
 
 var app = builder.Build();
 
+// Serve the Glama domain-verification file
+app.MapGet("/.well-known/glama.json", () =>
+    Results.Content(
+        "{\"$schema\":\"https://glama.ai/mcp/schemas/connector.json\",\"maintainers\":[{\"email\":\"kshort2584@gmail.com\"}]}",
+        "application/json"));
+
 // Map the MCP endpoints
 app.MapMcp();
 
