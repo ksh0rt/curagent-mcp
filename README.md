@@ -1,153 +1,96 @@
-# MCP Registry
+<!-- mcp-name: io.github.ksh0rt/curagent-mcp -->
 
-The MCP registry provides MCP clients with a list of MCP servers, like an app store for MCP servers.
+# Curagent MCP Server
 
-[**📤 Publish my MCP server**](docs/modelcontextprotocol-io/quickstart.mdx) | [**⚡️ Live API docs**](https://registry.modelcontextprotocol.io/docs) | [**👀 Ecosystem vision**](docs/design/ecosystem-vision.md) | 📖 **[Full documentation](./docs)**
+**AI-powered title risk analysis for real estate closing documents, exposed as an MCP server.**
 
-## Development Status
+Curagent analyzes real estate title documents — deeds, title commitments, mortgages, closing disclosures, surveys, payoff letters, HOA estoppels, and full closing packages — and returns a structured risk report with a composite score, individual findings, and AI-generated cure guidance.
 
-**2025-10-24 update**: The Registry API has entered an **API freeze (v0.1)** 🎉. For the next month or more, the API will remain stable with no breaking changes, allowing integrators to confidently implement support. This freeze applies to v0.1 while development continues on v0. We'll use this period to validate the API in real-world integrations and gather feedback to shape v1 for general availability. Thank you to everyone for your contributions and patience—your involvement has been key to getting us here!
+This MCP server lets AI agents and MCP-compatible clients (Claude, Cursor, and others) call Curagent directly.
 
-**2025-09-08 update**: The registry has launched in preview 🎉 ([announcement blog post](https://blog.modelcontextprotocol.io/posts/2025-09-08-mcp-registry-preview/)). While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. A general availability (GA) release will follow later. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions/new?category=ideas) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016) ([joining details here](https://modelcontextprotocol.io/community/communication)).
+> **Coverage:** Curagent currently supports **Florida** real estate transactions. Additional states are actively on the roadmap. Properties outside the supported region return a clear "out of scope" response — and are never charged.
 
-Registry Working Group:
-- **Tadas Antanavicius** (PulseMCP) [@tadasant](https://github.com/tadasant)
-- **Radoslav (Rado) Dimitrov** (Stacklok) [@rdimitrov](https://github.com/rdimitrov)
-- **Bob Dickinson** (TeamSpark) [@BobDickinson](https://github.com/BobDickinson)
-- **Preeti (Pree) Dewani** (Ravenmail) [@pree-dew](https://github.com/pree-dew)
+---
 
-## Contributing
+## Connection
 
-We use multiple channels for collaboration - see [modelcontextprotocol.io/community/communication](https://modelcontextprotocol.io/community/communication).
-
-Often (but not always) ideas flow through this pipeline:
-
-- **[Discord](https://modelcontextprotocol.io/community/communication)** - Real-time community discussions
-- **[Discussions](https://github.com/modelcontextprotocol/registry/discussions)** - Propose and discuss product/technical requirements
-- **[Issues](https://github.com/modelcontextprotocol/registry/issues)** - Track well-scoped technical work  
-- **[Pull Requests](https://github.com/modelcontextprotocol/registry/pulls)** - Contribute work towards issues
-
-### Quick start:
-
-#### Pre-requisites
-
-- **Docker**
-- **Go 1.24.x**
-- **ko** - Container image builder for Go ([installation instructions](https://ko.build/install/))
-- **golangci-lint v2.4.0**
-
-#### Running the server
-
-```bash
-# Start full development environment
-make dev-compose
-```
-
-This starts the registry at [`localhost:8080`](http://localhost:8080) with PostgreSQL. The database uses ephemeral storage and is reset each time you restart the containers, ensuring a clean state for development and testing.
-
-**Note:** The registry uses [ko](https://ko.build) to build container images. The `make dev-compose` command automatically builds the registry image with ko and loads it into your local Docker daemon before starting the services.
-
-By default, the registry seeds from the production API with a filtered subset of servers (to keep startup fast). This ensures your local environment mirrors production behavior and all seed data passes validation. For offline development you can seed from a file without validation with `MCP_REGISTRY_SEED_FROM=data/seed.json MCP_REGISTRY_ENABLE_REGISTRY_VALIDATION=false make dev-compose`.
-
-The setup can be configured with environment variables in [docker-compose.yml](./docker-compose.yml) - see [.env.example](./.env.example) for a reference.
-
-<details>
-<summary>Alternative: Running a pre-built Docker image</summary>
-
-Pre-built Docker images are automatically published to GitHub Container Registry. Note that the image does not bundle PostgreSQL, so you need to run your own and point the registry at it via `MCP_REGISTRY_DATABASE_URL` (see [docker-compose.yml](./docker-compose.yml) for a working example):
-
-```bash
-# Run latest stable release
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:latest
-
-# Run latest from main branch (continuous deployment)
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main
-
-# Run specific release version
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:v1.0.0
-
-# Run development build from main branch
-docker run -p 8080:8080 ghcr.io/modelcontextprotocol/registry:main-20250906-abc123d
-```
-
-**Available tags:** 
-- **Releases**: `latest`, `v1.0.0`, `v1.1.0`, etc.
-- **Continuous**: `main` (latest main branch build)
-- **Development**: `main-<date>-<sha>` (specific commit builds)
-
-</details>
-
-#### Publishing a server
-
-To publish a server, we've built a simple CLI. You can use it with:
-
-```bash
-# Build the latest CLI
-make publisher
-
-# Use it!
-./bin/mcp-publisher --help
-```
-
-See [the publisher guide](./docs/modelcontextprotocol-io/quickstart.mdx) for more details.
-
-#### Other commands
-
-```bash
-# Run lint, unit tests and integration tests
-make check
-```
-
-There are also a few more helpful commands for development. Run `make help` to learn more, or look in [Makefile](./Makefile).
-
-<!--
-For Claude and other AI tools: Always prefer make targets over custom commands where possible.
--->
-
-## Architecture
-
-### Project Structure
+This is a **hosted remote MCP server** — there's nothing to install or run. Point your MCP client at the hosted endpoint:
 
 ```
-├── cmd/                     # Application entry points
-│   └── publisher/           # Server publishing tool
-├── data/                    # Seed data
-├── deploy/                  # Deployment configuration (Pulumi)
-├── docs/                    # Documentation
-├── internal/                # Private application code
-│   ├── api/                 # HTTP handlers and routing
-│   ├── auth/                # Authentication (GitHub OAuth, JWT, namespace blocking)
-│   ├── config/              # Configuration management
-│   ├── database/            # Data persistence (PostgreSQL)
-│   ├── service/             # Business logic
-│   ├── telemetry/           # Metrics and monitoring
-│   └── validators/          # Input validation
-├── pkg/                     # Public packages
-│   ├── api/                 # API types and structures
-│   │   └── v0/              # Version 0 API types
-│   └── model/               # Data models for server.json
-├── scripts/                 # Development and testing scripts
-├── tests/                   # Integration tests
-└── tools/                   # CLI tools and utilities
-    └── validate-*.sh        # Schema validation tools
+https://mcp.curagent.io/
 ```
+
+Transport: **Streamable HTTP**
 
 ### Authentication
 
-Publishing supports multiple authentication methods:
-- **GitHub OAuth** - For publishing by logging into GitHub
-- **GitHub OIDC** - For publishing from GitHub Actions
-- **DNS verification** - For proving ownership of a domain and its subdomains
-- **HTTP verification** - For proving ownership of a domain
+Curagent authenticates with an API key, passed as an `X-API-Key` header on the connection. You configure it once when you set up the connection; the server forwards it to the Curagent API on each call.
 
-The registry validates namespace ownership when publishing. E.g. to publish...:
-- `io.github.domdomegg/my-cool-mcp` you must login to GitHub as `domdomegg`, or be in a GitHub Action on domdomegg's repos
-- `me.adamjones/my-cool-mcp` you must prove ownership of `adamjones.me` via DNS or HTTP challenge
+You'll need a Curagent API key to use the analysis tools. Request access at **[curagent.io](https://curagent.io)**.
 
-## Community Projects
+### Example client configuration
 
-Check out [community projects](docs/community-projects.md) to explore notable registry-related work created by the community.
+```json
+{
+  "mcpServers": {
+    "curagent": {
+      "url": "https://mcp.curagent.io/",
+      "transport": "streamable-http",
+      "headers": {
+        "X-API-Key": "your_curagent_api_key"
+      }
+    }
+  }
+}
+```
 
-## More documentation
+> Configuration format varies by client. Consult your MCP client's documentation for how it accepts a remote server URL and custom headers.
 
-See the [documentation](./docs) for more details if your question has not been answered here!
+---
+
+## Tools
+
+The server exposes three tools, designed so an agent can confirm fit and available balance *before* running an analysis.
+
+### `check_coverage`
+Returns what Curagent currently supports — supported states, document types, and pricing. No API key required. Call this first to confirm the property's state is in scope.
+
+### `get_credit_balance`
+Returns the caller's remaining credit balance and tier. Requires an API key. Call this before analyzing to confirm available usage.
+
+### `analyze_title_documents`
+Analyzes one or more title documents and returns a structured risk report (composite score, findings, and cure guidance). Requires an API key.
+
+- **Input:** one or more PDF documents, each as a base64-encoded string.
+- **Cost:** uses one analysis from your free monthly allowance (sandbox tier) or 1 credit (paid tiers).
+- **Scope:** Florida properties only. Out-of-scope submissions return an "out of scope" response and are not charged.
+
+---
+
+## How it works
+
+Curagent's risk engine evaluates a closing package the way a title professional would — checking for issues like unresolved liens, undisclosed easements, encroachments, probate and authority questions, legal description mismatches, expired documents, and party-name inconsistencies — then returns a scored, itemized report with guidance on how to cure each finding.
+
+The MCP server is a thin layer over the Curagent API. Your API key flows through it to the API, which does the analysis and meters usage.
+
+---
+
+## Pricing
+
+- **Sandbox tier** — free monthly analysis allowance, for evaluation.
+- **Credit bundles** — prepaid credits, 1 per analysis. Credits don't expire.
+- **Volume** — for higher-throughput or platform use, get in touch.
+
+See **[curagent.io](https://curagent.io)** for current details and to request access.
+
+---
+
+## Links
+
+- Website: [curagent.io](https://curagent.io)
+- API base: `https://api.curagent.io`
+- MCP endpoint: `https://mcp.curagent.io/`
+
+---
+
+Curagent is a product of Caldira LLC.
