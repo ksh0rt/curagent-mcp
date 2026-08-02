@@ -1,6 +1,12 @@
 <!-- mcp-name: io.github.ksh0rt/curagent-mcp -->
 
-# Curagent MCP Server
+<p align="center">
+  <img src="https://curagent.io/curagent-icon-180.png" alt="Curagent" width="96" height="96" />
+</p>
+
+<h1 align="center">Curagent MCP Server</h1>
+
+<p align="center">AI title risk analysis for Florida real estate closing documents.</p>
 
 **AI-powered title risk analysis for real estate closing documents, exposed as an MCP server.**
 
