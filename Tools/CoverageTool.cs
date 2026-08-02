@@ -25,7 +25,8 @@ public sealed class CoverageTool
                 "Survey", "Payoff Letter", "HOA Estoppel", "and related closing documents"
             },
             pricing = "Sandbox tier includes free monthly analyses; paid tiers use 1 credit per " +
-            "analysis (credits purchased in bundles). Use get_credit_balance to check usage." 
+            "analysis (credits purchased in bundles). Use get_credit_balance to check usage.",
+            getAccess = "Request an API key at https://curagent.io"
         };
     }
 }

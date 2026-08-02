@@ -23,7 +23,7 @@ public sealed class CreditBalanceTool
     {
         var apiKey = _http.HttpContext?.Request.Headers["X-API-Key"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(apiKey))
-            return new { error = "Missing API key. Configure your Curagent API key in the connection." };
+            return new { error = "Missing API key. Get one at https://curagent.io and configure it in your MCP connection." };
 
         var client = _httpFactory.CreateClient("curagent");
         client.DefaultRequestHeaders.Add("X-API-Key", apiKey);

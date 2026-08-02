@@ -29,7 +29,7 @@ public sealed class AnalyzeTool
     {
         var apiKey = _http.HttpContext?.Request.Headers["X-API-Key"].FirstOrDefault();
         if (string.IsNullOrWhiteSpace(apiKey))
-            return new { error = "Missing API key. Configure your Curagent API key in the connection." };
+            return new { error = "Missing API key. Get one at https://curagent.io and configure it in your MCP connection." };
 
         if (documentsBase64 is null || documentsBase64.Length == 0)
             return new { error = "No documents provided." };
