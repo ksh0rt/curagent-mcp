@@ -83,7 +83,7 @@ The MCP server is a thin layer over the Curagent API. Your API key flows through
 
 ## Pricing
 
-- **Sandbox tier** — free monthly analysis allowance, for evaluation.
+- **Sandbox tier** — 3 free analyses to start, for evaluation.
 - **Credit bundles** — prepaid credits, 1 per analysis. Credits don't expire.
 - **Volume** — for higher-throughput or platform use, get in touch.
 
