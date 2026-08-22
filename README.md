@@ -65,17 +65,17 @@ Returns what Curagent currently supports — supported states, document types, a
 Returns the caller's remaining credit balance and tier. Requires an API key. Call this before analyzing to confirm available usage.
 
 ### `analyze_title_documents`
-Analyzes one or more title documents and returns a structured risk report (composite score, findings, and cure guidance). Requires an API key.
+Analyzes one or more title documents and returns a structured risk report — risk score and level, findings with verbatim evidence and cure guidance, and extracted Schedule B-I requirements. Requires an API key.
 
 - **Input:** one or more PDF documents, each as a base64-encoded string.
-- **Cost:** uses one analysis from your free monthly allowance (sandbox tier) or 1 credit (paid tiers).
+- **Cost:** uses one of your 3 free analyses (sandbox tier) or 1 credit (paid tiers).
 - **Scope:** Florida properties only. Out-of-scope submissions return an "out of scope" response and are not charged.
 
 ---
 
 ## How it works
 
-Curagent's risk engine evaluates a closing package the way a title professional would — checking for issues like unresolved liens, undisclosed easements, encroachments, probate and authority questions, legal description mismatches, expired documents, and party-name inconsistencies — then returns a scored, itemized report with guidance on how to cure each finding.
+Curagent's risk engine evaluates a closing package the way a title professional would — checking for issues like unresolved liens, undisclosed easements, encroachments, probate and authority questions, legal description mismatches, expired documents, and party-name inconsistencies, and cross-document contradictions in parcel ID, address, and party names across a full package — then returns a scored, itemized report with guidance on how to cure each finding.
 
 The MCP server is a thin layer over the Curagent API. Your API key flows through it to the API, which does the analysis and meters usage.
 

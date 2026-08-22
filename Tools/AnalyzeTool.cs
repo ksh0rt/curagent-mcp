@@ -17,12 +17,18 @@ public sealed class AnalyzeTool
     }
 
     [McpServerTool, Description(
-        "Analyzes Florida real estate title documents and returns a structured risk report " +
-        "with a composite score, findings, and AI cure guidance. Accepts one or more PDF " +
-        "documents as base64 strings (deed, title commitment, mortgage, closing disclosure, " +
-        "survey, payoff letter, HOA estoppel, etc.). Uses one analysis from your free monthly allowance (sandbox tier) or 1 credit (paid tiers). " +
-        "Florida properties only — call check_coverage first to confirm scope, and " +
-        "get_credit_balance to confirm available credits.")]
+    "Analyzes Florida real estate title documents and returns a structured risk report: " +
+    "a risk score (0-100, higher is safer) and level, findings with verbatim evidence " +
+    "from the documents and guidance on how to cure each one, and the Schedule B-I " +
+    "requirements extracted from any title commitment in the package. Accepts one or " +
+    "more PDF documents as base64 strings (deed, title commitment, mortgage, closing " +
+    "disclosure, survey, payoff letter, HOA estoppel, etc.), including a single PDF " +
+    "containing a whole closing package, which is split into its constituent " +
+    "instruments. Submitting several documents together also enables cross-document " +
+    "checks for contradictions in parcel ID, address, and party names. " +
+    "Uses one of your 3 free analyses (sandbox tier) or 1 credit (paid tiers). " +
+    "Florida properties only — call check_coverage first to confirm scope, and " +
+    "get_credit_balance to confirm available credits.")]
     public async Task<object> AnalyzeTitleDocuments(
         [Description("One or more PDF documents, each as a base64-encoded string.")]
         string[] documentsBase64)
