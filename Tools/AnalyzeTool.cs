@@ -16,19 +16,18 @@ public sealed class AnalyzeTool
         _http = http;
     }
 
-    [McpServerTool, Description(
-    "Analyzes Florida real estate title documents and returns a structured risk report: " +
-    "a risk score (0-100, higher is safer) and level, findings with verbatim evidence " +
-    "from the documents and guidance on how to cure each one, and the Schedule B-I " +
-    "requirements extracted from any title commitment in the package. Accepts one or " +
-    "more PDF documents as base64 strings (deed, title commitment, mortgage, closing " +
-    "disclosure, survey, payoff letter, HOA estoppel, etc.), including a single PDF " +
-    "containing a whole closing package, which is split into its constituent " +
-    "instruments. Submitting several documents together also enables cross-document " +
-    "checks for contradictions in parcel ID, address, and party names. " +
-    "Uses one of your 3 free analyses (sandbox tier) or 1 credit (paid tiers). " +
-    "Florida properties only — call check_coverage first to confirm scope, and " +
-    "get_credit_balance to confirm available credits.")]
+    [McpServerTool(ReadOnly = false, Destructive = false, Idempotent = false, OpenWorld = false), Description(
+     "Analyzes US real estate title and closing documents and returns a structured risk report: a risk " +
+     "score (0-100, higher is safer) and level, findings with verbatim evidence from the documents and " +
+     "guidance on how to cure each one, the Schedule B-I requirements extracted from any title commitment " +
+     "in the package, and the jurisdiction applied (jurisdictionApplied). Accepts one or more PDF documents " +
+     "as base64 strings (deed, title commitment, mortgage, closing disclosure, survey, payoff letter, HOA " +
+     "estoppel, etc.), including a single PDF containing a whole closing package, which is split into its " +
+     "constituent instruments. Submitting several documents together also enables cross-document checks for " +
+     "contradictions in parcel ID, address, and party names. Properties in all 50 states and DC are analyzed; " +
+     "statute citations appear only for jurisdictions at production maturity, so call check_coverage to see " +
+     "each state's maturity. Uses one of your 3 free analyses (sandbox tier) or 1 credit (paid tiers); call " +
+     "get_credit_balance first to confirm available credits.")]
     public async Task<object> AnalyzeTitleDocuments(
         [Description("One or more PDF documents, each as a base64-encoded string.")]
         string[] documentsBase64)

@@ -6,26 +6,39 @@ namespace Curagent.Mcp.Tools;
 [McpServerToolType]
 public sealed class CoverageTool
 {
-    [McpServerTool, Description(
-        "Returns what Curagent currently supports: which US states, which document types, " +
-        "and how analysis is priced. Call this before analyzing to confirm the property's " +
-        "state is in scope. Curagent currently supports Florida real estate transactions only.")]
-    public static object CheckCoverage()
+    private readonly IHttpClientFactory _httpFactory;
+
+    public CoverageTool(IHttpClientFactory httpFactory)
     {
+        _httpFactory = httpFactory;
+    }
+
+    [McpServerTool(ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), Description(
+         "Returns what Curagent supports: every analyzed US jurisdiction with its maturity, which document " +
+        "types, and how analysis is priced. Curagent runs its full analysis for properties in all 50 states " +
+        "and DC using each state's own terminology; jurisdictions at production maturity also include " +
+        "hand-verified statute citations in cure guidance. No API key is needed for this call.")]
+    public async Task<object> CheckCoverage()
+    {
+        // Coverage comes from the API's registry rather than a copy here, so the
+        // MCP server can never disagree with what the API actually supports.
+        var client = _httpFactory.CreateClient("curagent");
+        var resp = await client.GetAsync("coverage");
+        if (!resp.IsSuccessStatusCode)
+            return new { error = $"Curagent API returned {(int)resp.StatusCode}." };
+
+        using var doc = System.Text.Json.JsonDocument.Parse(await resp.Content.ReadAsStringAsync());
+
         return new
         {
-            supportedStates = new[] { "FL" },
-            supportedStateNames = new[] { "Florida" },
-            note = "Curagent currently analyzes Florida real estate title documents only. " +
-                   "Properties in other states will be rejected as out of scope. " +
-                   "Additional states are on the roadmap.",
+            coverage = doc.RootElement.Clone(),
             supportedDocumentTypes = new[]
             {
                 "Warranty Deed", "Title Commitment", "Mortgage", "Closing Disclosure",
                 "Survey", "Payoff Letter", "HOA Estoppel", "and related closing documents"
             },
             pricing = "Sandbox tier includes 3 free analyses to start; paid tiers use 1 credit per " +
-            "analysis (credits purchased in bundles). Use get_credit_balance to check usage.",
+                      "analysis (credits purchased in bundles). Use get_credit_balance to check usage.",
             getAccess = "Request an API key at https://curagent.io"
         };
     }

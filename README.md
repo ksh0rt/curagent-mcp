@@ -6,7 +6,7 @@
 
 <h1 align="center">Curagent MCP Server</h1>
 
-<p align="center">AI title risk analysis for Florida real estate closing documents.</p>
+<p align="center">AI title risk analysis for US real estate closing documents.</p>
 
 **AI-powered title risk analysis for real estate closing documents, exposed as an MCP server.**
 
@@ -14,7 +14,12 @@ Curagent analyzes real estate title documents — deeds, title commitments, mort
 
 This MCP server lets AI agents and MCP-compatible clients (Claude, Cursor, and others) call Curagent directly.
 
-> **Coverage:** Curagent currently supports **Florida** real estate transactions. Additional states are actively on the roadmap. Properties outside the supported region return a clear "out of scope" response — and are never charged.
+> **Coverage:** Curagent analyzes properties in **all 50 states and DC**. Each jurisdiction has a maturity level, and every analysis reports the one it applied in `jurisdictionApplied`:
+>
+> - **production:** full analysis, validated against real documents from the state, with hand-verified statute citations in cure guidance. Currently **Florida**.
+> - **draft:** full analysis (every check, cross-document contradiction detection and cure guidance) using the state's own terminology, such as deed of trust vs. mortgage. Statute citations are added as each state is validated.
+>
+> Call `check_coverage` for the live list. It reads from the same registry the API uses, so it's always current.
 
 ---
 
@@ -59,17 +64,17 @@ You'll need a Curagent API key to use the analysis tools. Request access at **[c
 The server exposes three tools, designed so an agent can confirm fit and available balance *before* running an analysis.
 
 ### `check_coverage`
-Returns what Curagent currently supports — supported states, document types, and pricing. No API key required. Call this first to confirm the property's state is in scope.
+Returns what Curagent supports: every analyzed jurisdiction with its maturity and whether statute citations are enabled, plus document types and pricing. No API key required. Call this first to see how the property's state is supported.
 
 ### `get_credit_balance`
 Returns the caller's remaining credit balance and tier. Requires an API key. Call this before analyzing to confirm available usage.
 
 ### `analyze_title_documents`
-Analyzes one or more title documents and returns a structured risk report — risk score and level, findings with verbatim evidence and cure guidance, and extracted Schedule B-I requirements. Requires an API key.
+Analyzes one or more title documents and returns a structured risk report: risk score and level, findings with verbatim evidence and cure guidance, extracted Schedule B-I requirements, and the jurisdiction applied (`jurisdictionApplied`). Requires an API key.
 
 - **Input:** one or more PDF documents, each as a base64-encoded string.
 - **Cost:** uses one of your 3 free analyses (sandbox tier) or 1 credit (paid tiers).
-- **Scope:** Florida properties only. Out-of-scope submissions return an "out of scope" response and are not charged.
+- **Scope:** all 50 states and DC. Statute citations appear only for jurisdictions at production maturity.
 
 ---
 

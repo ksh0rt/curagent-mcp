@@ -15,7 +15,7 @@ public sealed class CreditBalanceTool
         _http = http;
     }
 
-    [McpServerTool, Description(
+    [McpServerTool(ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), Description(
     "Returns the caller's remaining Curagent credit balance and tier. " +
     "Call this before analyzing to confirm available usage. Sandbox tier includes 3 free " +
     "analyses total, not a recurring allowance; paid tiers use 1 credit per analysis.")]

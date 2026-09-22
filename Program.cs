@@ -7,10 +7,12 @@ builder.Services.AddMcpServer()
 
 builder.Services.AddHttpContextAccessor();
 
-// HttpClient so our tools can call the Curagent API
+// HttpClient so our tools can call the Curagent API. Configurable so local
+// development calls the local API; defaults to production when unset.
+var apiBaseUrl = builder.Configuration["Curagent:ApiBaseUrl"] ?? "https://api.curagent.io/";
 builder.Services.AddHttpClient("curagent", client =>
 {
-    client.BaseAddress = new Uri("https://api.curagent.io/");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
 
 var app = builder.Build();
