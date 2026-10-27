@@ -8,12 +8,12 @@ namespace Curagent.Mcp.Tools;
 public sealed class AnalyzeTool
 {
     private readonly IHttpClientFactory _httpFactory;
-    private readonly IHttpContextAccessor _http;
+    private readonly ApiKeyResolver _apiKey;
 
-    public AnalyzeTool(IHttpClientFactory httpFactory, IHttpContextAccessor http)
+    public AnalyzeTool(IHttpClientFactory httpFactory, ApiKeyResolver apiKey)
     {
         _httpFactory = httpFactory;
-        _http = http;
+        _apiKey = apiKey;
     }
 
     [McpServerTool(ReadOnly = false, Destructive = false, Idempotent = false, OpenWorld = false), Description(
@@ -32,9 +32,9 @@ public sealed class AnalyzeTool
         [Description("One or more PDF documents, each as a base64-encoded string.")]
         string[] documentsBase64)
     {
-        var apiKey = _http.HttpContext?.Request.Headers["X-API-Key"].FirstOrDefault();
+        var apiKey = _apiKey.Resolve();
         if (string.IsNullOrWhiteSpace(apiKey))
-            return new { error = "Missing API key. Get one at https://curagent.io and configure it in your MCP connection." };
+            return new { error = ApiKeyResolver.MissingKeyMessage };
 
         if (documentsBase64 is null || documentsBase64.Length == 0)
             return new { error = "No documents provided." };

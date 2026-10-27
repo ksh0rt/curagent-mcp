@@ -7,12 +7,12 @@ namespace Curagent.Mcp.Tools;
 public sealed class CreditBalanceTool
 {
     private readonly IHttpClientFactory _httpFactory;
-    private readonly IHttpContextAccessor _http;
+    private readonly ApiKeyResolver _apiKey;
 
-    public CreditBalanceTool(IHttpClientFactory httpFactory, IHttpContextAccessor http)
+    public CreditBalanceTool(IHttpClientFactory httpFactory, ApiKeyResolver apiKey)
     {
         _httpFactory = httpFactory;
-        _http = http;
+        _apiKey = apiKey;
     }
 
     [McpServerTool(ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false), Description(
@@ -21,9 +21,9 @@ public sealed class CreditBalanceTool
     "analyses total, not a recurring allowance; paid tiers use 1 credit per analysis.")]
     public async Task<object> GetCreditBalance()
     {
-        var apiKey = _http.HttpContext?.Request.Headers["X-API-Key"].FirstOrDefault();
+        var apiKey = _apiKey.Resolve();
         if (string.IsNullOrWhiteSpace(apiKey))
-            return new { error = "Missing API key. Get one at https://curagent.io and configure it in your MCP connection." };
+            return new { error = ApiKeyResolver.MissingKeyMessage };
 
         var client = _httpFactory.CreateClient("curagent");
         client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
