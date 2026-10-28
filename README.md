@@ -27,7 +27,7 @@ This MCP server lets AI agents and MCP-compatible clients (Claude, Cursor, and o
 
 ## Connection
 
-This is a **hosted remote MCP server** — there's nothing to install or run. Point your MCP client at the hosted endpoint:
+This is a **hosted remote MCP server**, so there's nothing to install or run. Point your MCP client at:
 
 ```
 https://mcp.curagent.io/
@@ -39,7 +39,7 @@ Transport: **Streamable HTTP**
 
 Curagent authenticates with an API key, passed as an `X-API-Key` header on the connection. You configure it once when you set up the connection; the server forwards it to the Curagent API on each call.
 
-You'll need a Curagent API key to use the analysis tools. Request access at **[curagent.io](https://curagent.io)**.
+Create an account at **[curagent.io](https://curagent.io)** to get a key. New accounts include 3 free analyses.
 
 ### Example client configuration
 
@@ -50,7 +50,7 @@ You'll need a Curagent API key to use the analysis tools. Request access at **[c
       "url": "https://mcp.curagent.io/",
       "transport": "streamable-http",
       "headers": {
-        "X-API-Key": "your_curagent_api_key"
+        "X-API-Key": "cur_live_your_key_here"
       }
     }
   }
@@ -58,6 +58,36 @@ You'll need a Curagent API key to use the analysis tools. Request access at **[c
 ```
 
 > Configuration format varies by client. Consult your MCP client's documentation for how it accepts a remote server URL and custom headers.
+
+### Running locally (stdio)
+
+The hosted endpoint is the recommended way to connect. If your client only supports local servers that it launches itself, the server can also run as a local process over stdio. It still calls the hosted Curagent API, so analyses use your credits as usual.
+
+Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download).
+
+```
+git clone https://github.com/ksh0rt/curagent-mcp
+cd curagent-mcp
+dotnet publish -c Release -o ./publish
+```
+
+Then configure your client to launch it, with your key in the `CURAGENT_API_KEY` environment variable:
+
+```json
+{
+  "mcpServers": {
+    "curagent": {
+      "command": "dotnet",
+      "args": ["/full/path/to/curagent-mcp/publish/Curagent.Mcp.dll", "--stdio"],
+      "env": {
+        "CURAGENT_API_KEY": "cur_live_your_key_here"
+      }
+    }
+  }
+}
+```
+
+In stdio mode the key is read only from `CURAGENT_API_KEY`. The hosted server reads it only from the `X-API-Key` header, so a key configured for one is never used by the other.
 
 ---
 
