@@ -8,6 +8,8 @@
 
 <p align="center">AI title risk analysis for US real estate closing documents.</p>
 
+[![Curagent MCP server – quality and maintenance score on Glama](https://glama.ai/mcp/servers/ksh0rt/curagent-mcp/badges/score.svg)](https://glama.ai/mcp/servers/ksh0rt/curagent-mcp)
+
 **AI-powered title risk analysis for real estate closing documents, exposed as an MCP server.**
 
 Curagent analyzes real estate title documents — deeds, title commitments, mortgages, closing disclosures, surveys, payoff letters, HOA estoppels, and full closing packages — and returns a structured risk report with a composite score, individual findings, and AI-generated cure guidance.
